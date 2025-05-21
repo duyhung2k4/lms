@@ -1,0 +1,80 @@
+:root {
+  --text-color: #969696;
+  --icon-color: #969696;
+  --line-link-color: unset;
+  --color-hight-light: unset
+}
+
+.link_root {
+  display: block;
+}
+
+.icon {
+  color: var(--icon-color);
+  padding: 0;
+  border-inline-end: 0px;
+  transition: all 200ms;
+}
+
+.link_root:hover {
+  --icon-color: #6E54B5;
+  --line-link-color: #6E54B5;
+  --text-color: #FFF;
+  --color-hight-light: #211428;
+}
+
+.active_link {
+  --icon-color: #6E54B5 !important;
+  --line-link-color: #6E54B5 !important;
+  --text-color: #FFF !important;
+  --color-hight-light: #211428;
+}
+
+.header {
+  background-color: #0C0C0C;
+}
+
+.nav {
+  height: 100%;
+  background-color: #0C0C0C;
+  justify-content: space-between !important;
+  position: relative;
+  transition: all 200ms;
+}
+
+.links {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.title_app {
+  text-transform: uppercase;
+  color: #6E54B5 !important;
+}
+
+.link {
+  flex: 9;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 200ms;
+}
+
+.line_link {
+  width: 3px;
+  height: 100%;
+  background-color: var(--line-link-color);
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.group_text {
+  background-color: var(--color-hight-light);
+}
+
+
+.text_link {
+  flex: 9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

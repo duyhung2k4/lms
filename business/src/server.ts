@@ -1,10 +1,10 @@
 import "module-alias/register";
 import runApp from ".";
-import prisma from "./infrastructure/connect_database";
+import { prismaConnection } from "./infrastructure";
 
 const init = async () => {
   try {
-    await prisma.$connect();
+    await prismaConnection.$connect();
     runApp();
   } catch (error) {
     console.log(error);

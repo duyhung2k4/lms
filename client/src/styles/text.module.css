@@ -1,0 +1,56 @@
+.high_light {
+    color: #6E54B5;
+    cursor: pointer;
+}
+.high_light:hover {
+    text-decoration: underline;
+    color: #8d6bea !important;
+}
+
+.title_page {
+    font-size: 24px;
+    font-weight: 600;
+    color: #FFF;
+}
+
+.text_size_md {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFF;
+}
+
+.text_size_sm {
+    font-size: 18px;
+    font-weight: 600;
+    color: #FFF;
+}
+
+.text_size_xs {
+  font-size: 14px;
+  font-weight: 500;
+  color: #FFF;
+}
+
+.limit_1_line {
+    display: -webkit-box;
+    display: box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.limit_3_line {
+    display: -webkit-box;
+    display: box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}

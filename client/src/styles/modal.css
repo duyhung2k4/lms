@@ -1,0 +1,17 @@
+.mantine-Modal-content,
+.mantine-Modal-header {
+    background-color: #151517 !important;
+}
+
+.mantine-Modal-close {
+    border: 2px solid #151517 !important;
+    outline: none !important;
+}
+.mantine-Modal-title {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}
+.mantine-Modal-close:hover {
+    background-color: #151517 !important;
+    border: 2px solid #6E54B5 !important;
+}
