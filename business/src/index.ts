@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors, { CorsOptions } from "cors";
 import initRouter from "./routes";
 import bodyParser from "body-parser";
 
@@ -8,7 +9,14 @@ dotenv.config();
 
 // app
 const app = express();
+// body
 app.use(bodyParser.json());
+// cors
+var corsOptions: CorsOptions = {
+  origin: '*'
+}
+app.use(cors(corsOptions));
+// init app
 initRouter(app);
 
 const PORT = process.env.PORT || 3000;

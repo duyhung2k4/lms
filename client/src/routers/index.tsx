@@ -7,7 +7,10 @@ import {
   PageDashboard,
   PageManagerCentificate,
   PageManagerDepartment,
+  PageManagerSemester,
+  PageManagerSubject,
   PageManagerTeacher,
+  PageSubjectDetail,
 } from "./lazy";
 
 
@@ -21,6 +24,9 @@ const AppRouter: React.FC = () => {
           <Route path={ROUTER.DASHBOARD.href} element={<PageDashboard />} />
           <Route path={ROUTER.MANAGER_DEPARTMENT.href} element={<PageManagerDepartment />} />
           <Route path={ROUTER.MANAGER_TEACHER.href} element={<PageManagerTeacher />} />
+          <Route path={ROUTER.MANAGER_SUBJECT.href} element={<PageManagerSubject />} />
+          <Route path={`${ROUTER.MANAGER_SUBJECT.href}/:code`} element={<PageSubjectDetail />} />
+          <Route path={ROUTER.MANAGER_SEMESTER.href} element={<PageManagerSemester />} />
           <Route path={ROUTER.MANAGER_CENTIFICATE.href} element={<PageManagerCentificate />} />
         </Route>
       </Routes>

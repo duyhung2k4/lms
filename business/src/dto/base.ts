@@ -3,7 +3,7 @@ import { Prisma } from "../generated/prisma"
 
 export type BaseResponse = {
   data?: any
-  error?: Error
+  error?: any
   status: number
   message: string
 }

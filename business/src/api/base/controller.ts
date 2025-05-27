@@ -1,12 +1,21 @@
+import { ERROR_BAD_REQUEST } from "@root/src/constants/error";
 import { BaseQueryAnyRequest, BaseResponse } from "@root/src/dto/base";
+import { preprocessingData } from "@root/src/middlewares";
 import { utils } from "@root/src/utils";
 import type { Request, Response } from "express";
 
 const handleFilter = async (req: Request, res: Response) => {
   try {
-    let query = req.body as BaseQueryAnyRequest;
+    let { query } = req.query;
+    if (!query) throw ERROR_BAD_REQUEST.QUERY_NOT_FOUND;
+    if (typeof query !== "string") throw ERROR_BAD_REQUEST.TYPE_OF_QUERY_INVALID;
+
+    const decoded = decodeURIComponent(query);
+    const parsed = JSON.parse(decoded);
+    const payload = parsed as BaseQueryAnyRequest;
+    
     let queryFunc = null
-    switch (query.type) {
+    switch (payload.type) {
       case "one":
         queryFunc = utils.baseQueryAny.getOne
         break;
@@ -21,19 +30,18 @@ const handleFilter = async (req: Request, res: Response) => {
       throw "filter method not found!"
     }
 
-    const data = await queryFunc(query);
+    const data = await queryFunc(payload);
     const result: BaseResponse = {
       data,
       error: undefined,
       status: 200,
-      message: `${query.modelName}: filter success!`,
+      message: `${payload.modelName}: filter success!`,
     }
     res.status(200).json(result);
-    return;
   } catch (error) {
     res.status(502).json({
       data: null,
-      error: error,
+      error: `${error}`,
       status: 502,
       message: "handle error!",
     } as BaseResponse);
@@ -42,8 +50,9 @@ const handleFilter = async (req: Request, res: Response) => {
 
 const handleQuery = async (req: Request, res: Response) => {
   try {
-    const query = req.body as BaseQueryAnyRequest;
+    const query = preprocessingData(req.body as BaseQueryAnyRequest);
     let queryFunc = null;
+    if (query.action === "read") throw "method invalid!";
     switch (query.type) {
       case "one":
         switch (query.action) {
@@ -55,6 +64,9 @@ const handleQuery = async (req: Request, res: Response) => {
             break;
           case "delete":
             queryFunc = utils.baseQueryAny.deleteOne
+            break;
+          case "destroy":
+            queryFunc = utils.baseQueryAny.destroyOne
             break;
           default:
             break;
@@ -71,6 +83,9 @@ const handleQuery = async (req: Request, res: Response) => {
           case "delete":
             queryFunc = utils.baseQueryAny.deleteMany
             break;
+          case "destroy":
+            queryFunc = utils.baseQueryAny.destroyMany
+            break;
           default:
             break;
         }
@@ -78,7 +93,7 @@ const handleQuery = async (req: Request, res: Response) => {
       default:
         break;
     }
-    if(!queryFunc) throw "not found action!";
+    if (!queryFunc) throw "not found action!";
     const data = await queryFunc(query);
     const result: BaseResponse = {
       data,
@@ -90,7 +105,7 @@ const handleQuery = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(502).json({
       data: null,
-      error: error,
+      error: `${error}`,
       status: 502,
       message: "handle error!",
     } as BaseResponse);

@@ -1,6 +1,8 @@
 import {
+  IconAlignBoxLeftTop,
   IconBuilding,
   IconCertificate,
+  IconColorPicker,
   IconLayoutDashboard,
   IconUserSquare,
   type Icon,
@@ -19,6 +21,8 @@ export type KeyRoute =
   | "MANAGER_TEACHER"
   | "MANAGER_DEPARTMENT"
   | "MANAGER_CENTIFICATE"
+  | "MANAGER_SUBJECT"
+  | "MANAGER_SEMESTER"
 
 export const ROUTER: Record<KeyRoute, TypeInfoRoute> = {
   BASE: {
@@ -31,17 +35,27 @@ export const ROUTER: Record<KeyRoute, TypeInfoRoute> = {
   },
   MANAGER_TEACHER: {
     href: "/manager-teacher",
-    name: "Quản lí giáo viên",
+    name: "Quản lý giáo viên",
     icon: IconUserSquare,
   },
   MANAGER_DEPARTMENT: {
     href: "/manager-department",
-    name: "Quản lí khoa",
+    name: "Quản lý khoa",
     icon: IconBuilding,
   },
   MANAGER_CENTIFICATE: {
     href: "/manager-centificate",
-    name: "Quản lí chứng chỉ",
+    name: "Quản lý chứng chỉ",
     icon: IconCertificate,
+  },
+  MANAGER_SUBJECT: {
+    href: "/manager-subject",
+    name: "Quản lý môn học",
+    icon: IconColorPicker,
+  },
+  MANAGER_SEMESTER: {
+    href: "/manager-semester",
+    name: "Quản lý kì học",
+    icon: IconAlignBoxLeftTop,
   }
 }

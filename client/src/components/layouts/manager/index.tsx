@@ -1,7 +1,8 @@
 import React, { Suspense, useEffect, useMemo, useState } from "react";
+import HeaderTop from "../Header";
 
 import { Outlet, useNavigate } from "react-router";
-import { ActionIcon, Avatar, Box, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { ActionIcon, Box, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { ROUTER } from "@/constants/routes";
 import { IconBrandDatabricks, IconSquareArrowLeftFilled, IconSquareArrowRightFilled } from "@tabler/icons-react";
 import { SIZE } from "@/constants/size";
@@ -18,9 +19,11 @@ const AppshellLayout: React.FC = () => {
   const links: TypeInfoRoute[] = useMemo(() => {
     let list: TypeInfoRoute[] = [
       ROUTER.DASHBOARD,
-      ROUTER.MANAGER_CENTIFICATE,
       ROUTER.MANAGER_DEPARTMENT,
       ROUTER.MANAGER_TEACHER,
+      ROUTER.MANAGER_SEMESTER,
+      ROUTER.MANAGER_SUBJECT,
+      ROUTER.MANAGER_CENTIFICATE,
     ];
 
     return list;
@@ -60,9 +63,7 @@ const AppshellLayout: React.FC = () => {
     return (
       <>
         {
-          show &&
-          (showText &&
-            props.children)
+          show && showText && props.children
         }
       </>
     )
@@ -81,7 +82,6 @@ const AppshellLayout: React.FC = () => {
             </BoxShow>
           </Group>
           <Stack className={classes.links}>
-
             {
               links.map((l, i) => {
                 const Icon = l.icon;
@@ -91,7 +91,8 @@ const AppshellLayout: React.FC = () => {
                   <Group
                     key={i}
                     className={`${classes.link_root} ${active ? classes.active_link : null}`}
-                    gap={0} w={"100%"}
+                    gap={0} 
+                    w={"100%"}
                     onClick={() => handleNavigation(l.href)}
                   >
                     <Box className={classes.line_link}></Box>
@@ -117,15 +118,13 @@ const AppshellLayout: React.FC = () => {
                 )
               })
             }
-
-
           </Stack>
-          <Group p={16} justify={show ? "start" : "center"} align="center">
+          {/* <Group p={16} justify={show ? "start" : "center"} align="center">
             <Avatar radius="xl" />
             <BoxShow>
               <Text>Admin</Text>
             </BoxShow>
-          </Group>
+          </Group> */}
 
           <ActionIcon
             style={{
@@ -160,7 +159,27 @@ const AppshellLayout: React.FC = () => {
             overflow: "hidden",
           }}
         >
-          <Outlet />
+          <Stack
+            style={{
+              height: "100%",
+              width: "100%",
+            }}
+            gap={0}
+          >
+            <HeaderTop />
+            <Stack
+              style={{
+                flex: 1,
+                height: "100%",
+                maxHeight: "100%",
+                overflow: "scroll",
+                padding: 8,
+              }}>
+              <Suspense fallback={<LoadingOverlay />}>
+                <Outlet />
+              </Suspense>
+            </Stack>
+          </Stack>
         </Group>
       </Group>
     </Suspense>

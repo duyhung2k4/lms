@@ -1,6 +1,8 @@
 import { ERROR_QUERY_DB } from "@root/src/constants/error";
+import { TIME_FORMAT } from "@root/src/constants/format";
 import { Prisma } from "@root/src/generated/prisma";
 import { prismaConnection } from "@root/src/infrastructure";
+import dayjs from "dayjs";
 
 export type BaseQueryType = {
   modelName: Prisma.ModelName,
@@ -86,13 +88,14 @@ const updateOne = async (payload: BaseQueryType) => {
       where: payload.conditions,
       data: {
         ...payload.data,
-        updated_at: Date.now(),
+        updated_at: dayjs().toDate(),
       },
       include: payload.include,
       omit: payload.omit,
     });
     return result
   } catch (error) {
+    console.log(error);
     throw error;
   }
 }
@@ -103,7 +106,7 @@ const updateMany = async (payload: BaseQueryType) => {
       where: payload.conditions,
       data: [...payload.data].map(item => ({
         ...item,
-        updated_at: Date.now(),
+        updated_at: dayjs().toDate(),
       })),
       include: payload.include,
       omit: payload.omit,
@@ -117,8 +120,9 @@ const updateMany = async (payload: BaseQueryType) => {
 
 const deleteOne = async (payload: BaseQueryType) => {
   try {
-    const result = await (prismaConnection as any)[payload.modelName].delete({
+    const result = await (prismaConnection as any)[payload.modelName].update({
       where: payload.conditions,
+      data: { deleted_at: dayjs().toDate() },
     });
     return result;
   } catch (error) {
@@ -127,6 +131,29 @@ const deleteOne = async (payload: BaseQueryType) => {
 }
 
 const deleteMany = async (payload: BaseQueryType) => {
+  try {
+    const result = await (prismaConnection as any)[payload.modelName].updateMany({
+      where: payload.conditions,
+      data: { deleted_at: dayjs().toDate() },
+    });
+    return result as Prisma.BatchPayload
+  } catch (error) {
+    throw error;
+  }
+}
+
+const destroyOne = async (payload: BaseQueryType) => {
+  try {
+    const result = await (prismaConnection as any)[payload.modelName].delete({
+      where: payload.conditions,
+    });
+    return result as Prisma.BatchPayload
+  } catch (error) {
+    throw error;
+  }
+}
+
+const destroyMany = async (payload: BaseQueryType) => {
   try {
     const result = await (prismaConnection as any)[payload.modelName].deleteMany({
       where: payload.conditions,
@@ -146,4 +173,6 @@ export const baseQueryAny = {
   updateMany,
   deleteOne,
   deleteMany,
+  destroyOne,
+  destroyMany,
 }

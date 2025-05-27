@@ -1,6 +1,7 @@
 import { ERROR_QUERY_DB } from "@root/src/constants/error";
 import { Prisma } from "@root/src/generated/prisma";
 import { prismaConnection } from "@root/src/infrastructure";
+import dayjs from "dayjs";
 
 export type BaseFilterType = {
   modelName: Prisma.ModelName,
@@ -84,7 +85,7 @@ const updateOne = async <T>(
       where: condition,
       data: {
         ...newData,
-        updated_at: Date.now(),
+        updated_at: dayjs().toDate(),
       },
       include,
       omit,
@@ -105,7 +106,10 @@ const updateMany = async <T>(
   try {
     const result = await (prismaConnection as any)[modelName].updateManyAndReturn({
       where: condition,
-      data: newData,
+      data: {
+        ...newData,
+        updated_at: dayjs().toDate(),
+      },
       include,
       omit,
     });
@@ -121,6 +125,36 @@ const deleteOne = async <T>(
   condition: Record<any, any>,
 ): Promise<T> => {
   try {
+    const result = await (prismaConnection as any)[modelName].update({
+      where: condition,
+      data: { deleted_at: dayjs().toDate() },
+    });
+    return result as T;
+  } catch (error) {
+    throw error;
+  }
+}
+
+const deleteMany = async (
+  modelName: Prisma.ModelName,
+  condition: Record<any, any>,
+): Promise<Prisma.BatchPayload> => {
+  try {
+    const result = await (prismaConnection as any)[modelName].updateMany({
+      where: condition,
+      data: { deleted_at: dayjs().toDate() },
+    });
+    return result as Prisma.BatchPayload
+  } catch (error) {
+    throw error;
+  }
+}
+
+const destroyOne = async <T>(
+  modelName: Prisma.ModelName,
+  condition: Record<any, any>,
+): Promise<T> => {
+  try {
     const result = await (prismaConnection as any)[modelName].delete({
       where: condition,
     });
@@ -130,7 +164,7 @@ const deleteOne = async <T>(
   }
 }
 
-const deleteMany = async <T>(
+const destroyMany = async <T>(
   modelName: Prisma.ModelName,
   condition: Record<any, any>,
 ): Promise<Prisma.BatchPayload> => {
@@ -144,16 +178,6 @@ const deleteMany = async <T>(
   }
 }
 
-const check = async () => {
-  const reult = await prismaConnection.users.findMany({
-    where: {
-      id: {
-        in:[]
-      },
-    },
-  })
-}
-
 export const baseQuery = {
   getOne,
   getMany,
@@ -163,4 +187,6 @@ export const baseQuery = {
   updateMany,
   deleteOne,
   deleteMany,
+  destroyOne,
+  destroyMany,
 }

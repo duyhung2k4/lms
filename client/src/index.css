@@ -26,17 +26,17 @@ body {
   border-radius: 10px;
 }
 
-.mantine-Input-input,
+/* .mantine-Input-input,
 .mantine-PasswordInput-innerInput {
   &:focus {
     outline: 2px solid #6E6191 !important;
   }
-}
+} */
 
-.mantine-Slider-track::before {
+/* .mantine-Slider-track::before {
   background-color: #FFF !important;
   opacity: 0.5;
-}
+} */
 
 video::-webkit-media-controls {
   display: none !important;
