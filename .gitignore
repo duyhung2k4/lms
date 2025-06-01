@@ -10,6 +10,8 @@
 *yarn-error.log*
 *pnpm-debug.log*
 *lerna-debug.log*
+*typesense_data
+*rabbitmq_data
 
 *dist
 *dist-ssr

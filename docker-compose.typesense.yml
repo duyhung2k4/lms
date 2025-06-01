@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  typesense:
+    image: typesense/typesense:28.0
+    restart: on-failure
+    container_name: typesense-ctn
+    ports:
+      - "8108:8108"
+    volumes:
+      - ./data/typesense_data:/data
+    command: '--data-dir /data --api-key=business-apikey --enable-cors'
+
+  dashboard:
+    image: bfritscher/typesense-dashboard
+    container_name: typesense-dashboard-ctn
+    ports:
+      - "8000:80"
+    environment:
+      - TYPESENSE_API_KEY=business-apikey
+      - TYPESENSE_HOST=http://typesense:8108

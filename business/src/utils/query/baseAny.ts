@@ -1,5 +1,4 @@
 import { ERROR_QUERY_DB } from "@root/src/constants/error";
-import { TIME_FORMAT } from "@root/src/constants/format";
 import { Prisma } from "@root/src/generated/prisma";
 import { prismaConnection } from "@root/src/infrastructure";
 import dayjs from "dayjs";
