@@ -5,6 +5,7 @@ import client from "prom-client";
 import dotenv from "dotenv";
 import { typesenseClient } from "./infrastructure/connect_typesense";
 import { searchCollections } from "./utils/typesense";
+import { BaseResponse } from "./dto/base";
 
 
 
@@ -52,11 +53,22 @@ app.use((req, res, next) => {
     });
     next();
 });
+// Middleware tính request
+const httpRequestsTotal = new client.Counter({
+    name: 'http_requests_total',
+    help: 'Total number of HTTP requests',
+});
+app.use((req, res, next) => {
+    httpRequestsTotal.inc(); // Tăng mỗi khi có request
+    next();
+});
 // Expose metrics ở /metrics
 app.get('/metrics', async (req, res) => {
     res.set('Content-Type', client.register.contentType);
     res.end(await client.register.metrics());
 });
+
+
 
 
 
@@ -73,15 +85,33 @@ app.get("/api/ping", (req: Request, res: Response) => {
 app.get("/api/search", async (req: Request, res: Response) => {
     try {
         const { q } = req.query;
-        if (!q) throw "q not found!";
-        const results = await searchCollections(q.toString());
-        res.status(200).json({
-            results,
-        })
+        if(q === undefined) throw "q not found!";
+        if (q === "") {
+            const result: BaseResponse = {
+                data: null,
+                message: "ok",
+                status: 200,
+                error: null,
+            }
+            res.status(200).json(result);
+            return;
+        }
+        const data = await searchCollections(q.toString());
+        const result: BaseResponse = {
+            data,
+            message: "ok",
+            status: 200,
+            error: null,
+        }
+        res.status(200).json(result);
     } catch (error) {
-        res.status(502).json({
-            err: `${error}`,
-        });
+        const result: BaseResponse = {
+            data: null,
+            message: "ok",
+            status: 200,
+            error: `${error}`,
+        }
+        res.status(502).json(result);
     }
 })
 

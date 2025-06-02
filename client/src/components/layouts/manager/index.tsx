@@ -7,7 +7,6 @@ import { ROUTER } from "@/constants/routes";
 import { IconBrandDatabricks, IconSquareArrowLeftFilled, IconSquareArrowRightFilled } from "@tabler/icons-react";
 import { SIZE } from "@/constants/size";
 import type { TypeInfoRoute } from "@/constants/routes";
-
 import classes from "./styles.module.css";
 
 
@@ -119,12 +118,6 @@ const AppshellLayout: React.FC = () => {
               })
             }
           </Stack>
-          {/* <Group p={16} justify={show ? "start" : "center"} align="center">
-            <Avatar radius="xl" />
-            <BoxShow>
-              <Text>Admin</Text>
-            </BoxShow>
-          </Group> */}
 
           <ActionIcon
             style={{

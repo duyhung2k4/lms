@@ -46,6 +46,15 @@ app.use((req, res, next) => {
     });
     next();
 });
+// Middleware tính request
+const httpRequestsTotal = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+});
+app.use((req, res, next) => {
+  httpRequestsTotal.inc(); // Tăng mỗi khi có request
+  next();
+});
 // Expose metrics ở /metrics
 app.get('/metrics', async (req, res) => {
     res.set('Content-Type', client.register.contentType);
