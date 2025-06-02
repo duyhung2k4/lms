@@ -1,5 +1,6 @@
 import { Client } from "typesense";
 import { CollectionCreateOptions, CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
+import { Prisma } from "../generated/prisma";
 
 const typesenseAdminClient = new Client({
   nodes: [
@@ -9,7 +10,7 @@ const typesenseAdminClient = new Client({
       protocol: 'http'
     }
   ],
-  apiKey: '5Vz5GWuotimZDDa9oMDaU7CLxaRl6tOU', // Admin API Key
+  apiKey: 'XEh2vla5fsBBIG3scTtNmIrhkrXogiTY', // Admin API Key
   connectionTimeoutSeconds: 2
 });
 
@@ -21,7 +22,7 @@ const typesenseSearchClient = new Client({
       protocol: 'http'
     }
   ],
-  apiKey: 'yWEy1vOLATCTss8EHZTevdJA0Kb59Cwy',
+  apiKey: 'K7iyLuywV7EVfr5nOgkFDLuQzkGRHBxI',
   connectionTimeoutSeconds: 2
 });
 
@@ -30,7 +31,7 @@ export const createCollection = async () => {
         const collectionExist = await typesenseAdminClient.collections().retrieve();
         const collectionCreate : CollectionCreateSchema<CollectionCreateOptions>[] = [
             {
-                name: "subjects",
+                name: Prisma.ModelName.subjects,
                 fields: [
                     { name: "id", type: "string" },
                     { name: "name", type: "string" },
@@ -40,8 +41,39 @@ export const createCollection = async () => {
                     { name: "number_of_lessons", type: "int32" },
                     { name: "unit", type: "float" },
                     { name: "department_id", type: "int64" },
-                ],
-                default_sorting_field: "name",
+                ]
+            },
+            {
+                name: Prisma.ModelName.departments,
+                fields: [
+                    { name: "id", type: "string" },
+                    { name: "name", type: "string" },
+                    { name: "code", type: "string" },
+                    { name: "description", type: "string" },
+                ]
+            },
+            {
+                name: Prisma.ModelName.profiles,
+                fields: [
+                    { name: "id", type: "string" },
+                    { name: "first_name", type: "string" },
+                    { name: "last_name", type: "string" },
+                    { name: "email", type: "string" },
+                    { name: "phone", type: "string" },
+                    { name: "lms_code", type: "string" },
+                    { name: "status", type: "bool" },
+                ]
+            },
+            {
+                name: Prisma.ModelName.semesters,
+                fields: [
+                    { name: "id", type: "string" },
+                    { name: "name", type: "string" },
+                    { name: "description", type: "string" },
+                    // { name: "start_time", type: "string" },
+                    // { name: "end_time", type: "int32" },
+                    { name: "school_year_id", type: "int32" },
+                ]
             }
         ];
         const collectionNotFound = collectionCreate.filter(item => !collectionExist.find(c => c.name === item.name));

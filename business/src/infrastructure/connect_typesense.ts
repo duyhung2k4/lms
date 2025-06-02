@@ -1,5 +1,6 @@
 import { Client } from "typesense";
 import { CollectionCreateOptions, CollectionCreateSchema } from "typesense/lib/Typesense/Collections";
+import { Prisma } from "../generated/prisma";
 
 const typesenseAdminClient = new Client({
   nodes: [
@@ -30,7 +31,7 @@ export const createCollection = async () => {
         const collectionExist = await typesenseAdminClient.collections().retrieve();
         const collectionCreate : CollectionCreateSchema<CollectionCreateOptions>[] = [
             {
-                name: "subjects",
+                name: Prisma.ModelName.subjects,
                 fields: [
                     { name: "id", type: "string" },
                     { name: "name", type: "string" },

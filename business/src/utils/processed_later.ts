@@ -1,13 +1,22 @@
 import { BaseQueryAnyRequest } from "../dto/base";
+import { Prisma } from "../generated/prisma";
 import { getChannel, PayloadQueue, QUEUE_NAME } from "../infrastructure/connect_rabbitmq";
-import { typesenseClient } from "../infrastructure/connect_typesense";
 
 export const processedLaterBaseQuery = async (payload: BaseQueryAnyRequest, result: any) => {
+    let listModelNameTrigger = [
+        Prisma.ModelName.departments,
+        Prisma.ModelName.profiles,
+        Prisma.ModelName.semesters,
+        Prisma.ModelName.subjects,
+    ]
+    let modelName = listModelNameTrigger.find(item => item === payload.modelName);
+    if (!modelName) return;
+
     let channel = getChannel();
     switch (payload.type) {
         case "one":
             let newResult = result as Record<any, any>;
-            if(newResult["id"]) {
+            if (newResult["id"]) {
                 newResult = {
                     ...newResult,
                     id: `${newResult["id"]}`,
@@ -16,13 +25,8 @@ export const processedLaterBaseQuery = async (payload: BaseQueryAnyRequest, resu
             switch (payload.action) {
                 case "create":
                 case "update":
-                    // await typesenseClient
-                    //     .typesenseAdminClient
-                    //     .collections("subjects")
-                    //     .documents()
-                    //     .import([newResult], { action: "upsert" });
                     let msg: PayloadQueue = {
-                        modelName: payload.modelName,
+                        modelName,
                         type: "upsert",
                         data: [newResult],
                     }
@@ -43,13 +47,8 @@ export const processedLaterBaseQuery = async (payload: BaseQueryAnyRequest, resu
             switch (payload.action) {
                 case "create":
                 case "update":
-                    // await typesenseClient
-                    //     .typesenseAdminClient
-                    //     .collections("subjects")
-                    //     .documents()
-                    //     .import(newResults, { action: "upsert" });
                     let msg: PayloadQueue = {
-                        modelName: payload.modelName,
+                        modelName,
                         type: "upsert",
                         data: newResults,
                     }

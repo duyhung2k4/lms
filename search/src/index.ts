@@ -1,9 +1,14 @@
 import express, { Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
-import initRouter from "./routes";
 import bodyParser from "body-parser";
 import client from "prom-client";
+import dotenv from "dotenv";
 import { typesenseClient } from "./infrastructure/connect_typesense";
+
+
+
+// config
+dotenv.config();
 
 
 
@@ -57,19 +62,39 @@ app.get('/metrics', async (req, res) => {
 // ping
 app.get("/api/ping", (req: Request, res: Response) => {
     res.status(200).json({
-        mess: "business done",
+        mess: "search done!",
     });
 });
 
 
 
-// init app
-initRouter(app);
+// search
+app.get("/api/search", async (req: Request, res: Response) => {
+    try {
+        const { q } = req.query;
+        if (!q) throw "q not found!";
+        console.log(q);
+        const results = await typesenseClient.typesenseSearchClient
+            .collections("subjects")
+            .documents()
+            .search({
+                q: q.toString(),
+                query_by: "*"
+            });
+        res.status(200).json({
+            results,
+        })
+    } catch (error) {
+        res.status(502).json({
+            err: `${error}`,
+        });
+    }
+})
 
 const PORT = Number(process.env.PORT || 3000);
 const runApp = () => {
     app.listen(PORT, '0.0.0.0', () => {
-        console.log(`Service business: http://localhost:${PORT}`);
+        console.log(`Service search: http://localhost:${PORT}`);
     });
 }
 
