@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import client from "prom-client";
 import dotenv from "dotenv";
 import { typesenseClient } from "./infrastructure/connect_typesense";
+import { searchCollections } from "./utils/typesense";
 
 
 
@@ -73,14 +74,7 @@ app.get("/api/search", async (req: Request, res: Response) => {
     try {
         const { q } = req.query;
         if (!q) throw "q not found!";
-        console.log(q);
-        const results = await typesenseClient.typesenseSearchClient
-            .collections("subjects")
-            .documents()
-            .search({
-                q: q.toString(),
-                query_by: "*"
-            });
+        const results = await searchCollections(q.toString());
         res.status(200).json({
             results,
         })
