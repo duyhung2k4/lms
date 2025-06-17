@@ -12,8 +12,8 @@ const queries = new SharedArray('queries', function () {
 });
 
 export let options = {
-  vus: 1000,             // 10 người dùng ảo
-  duration: '30s',     // chạy trong 30 giây
+  vus: 100,             // 10 người dùng ảo
+  duration: '60s',     // chạy trong 30 giây
 };
 
 export default function () {

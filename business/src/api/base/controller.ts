@@ -2,7 +2,6 @@ import { ERROR_BAD_REQUEST } from "@root/src/constants/error";
 import { BaseQueryAnyRequest, BaseResponse } from "@root/src/dto/base";
 import { preprocessingData } from "@root/src/middlewares";
 import { utils } from "@root/src/utils";
-import { processedLaterBaseQuery } from "@root/src/utils/processed_later";
 import type { Request, Response } from "express";
 
 const handleFilter = async (req: Request, res: Response) => {
@@ -14,7 +13,7 @@ const handleFilter = async (req: Request, res: Response) => {
     const decoded = decodeURIComponent(query);
     const parsed = JSON.parse(decoded);
     const payload = parsed as BaseQueryAnyRequest;
-    
+
     let queryFunc = null
     switch (payload.type) {
       case "one":
@@ -27,7 +26,7 @@ const handleFilter = async (req: Request, res: Response) => {
         break;
     }
 
-    if(!queryFunc) {
+    if (!queryFunc) {
       throw "filter method not found!"
     }
 
@@ -96,7 +95,6 @@ const handleQuery = async (req: Request, res: Response) => {
     }
     if (!queryFunc) throw "not found action!";
     const data = await queryFunc(query);
-    await processedLaterBaseQuery(query, data);
     const result: BaseResponse = {
       data,
       error: undefined,
