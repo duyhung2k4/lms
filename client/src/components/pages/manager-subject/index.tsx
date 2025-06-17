@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useMemo, useState } from "react";
-import { ActionIcon, Badge, Button, Group, Menu, Stack, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Badge, Button, Group, Menu, Select, Stack, Text, Tooltip } from "@mantine/core";
 import {
   useMantineReactTable,
   MantineReactTable,
@@ -9,9 +9,10 @@ import {
 import { IconDots, IconEdit, IconEye, IconPlus, IconReload, IconTrash } from "@tabler/icons-react";
 import { useFilterQuery } from "@/redux/api/base";
 import { ModalForm } from "./components/modal_form";
-import type { SubjectModel } from "@/models/subject";
 import { useNavigate } from "react-router";
 import { ROUTER } from "@/constants/routes";
+import type { SubjectModel } from "@/models/subject";
+import type { SemesterModel } from "@/models/semester";
 
 
 
@@ -22,6 +23,7 @@ const ManagerSubject: React.FC = () => {
   const [rowSelection, setRowSelection] = useState<MRT_RowSelectionState>({});
   const [detailSubject, setDetailSubject] = useState<SubjectModel | null>(null);
   const [subjectSelect, setSubjectSelect] = useState<SubjectModel[]>([]);
+  const [semesterSelect, setSemesterSelect] = useState<SemesterModel | null>(null);
   const [action, setAction] = useState<"create" | "update" | null>(null);
 
 
@@ -44,15 +46,31 @@ const ManagerSubject: React.FC = () => {
     data: {},
     include: {
       department: true,
+      section_class: true,
     },
     orderBy: { name: "asc" },
   });
   const subjects = (data?.data || []) as SubjectModel[];
 
+  const {
+    data: dataSemester,
+    refetch: refetchSemester,
+    isFetching: loadingGetSemester,
+  } = useFilterQuery({
+    action: "read",
+    type: "many",
+    modelName: "semesters",
+    conditions: {},
+    data: {},
+    include: {},
+    orderBy: { name: "asc" },
+  });
+  const semesters = (dataSemester?.data || []) as SemesterModel[];
+
 
 
   // status
-  const loading = loadingGetSubject;
+  const loading = loadingGetSubject || loadingGetSemester;
 
 
 
@@ -83,6 +101,35 @@ const ManagerSubject: React.FC = () => {
         accessorKey: "unit",
         header: "Giá tín chỉ",
         size: 180,
+      },
+      {
+        accessorKey: "count_section_class",
+        header: "Số lớp mở",
+        size: 180,
+        Cell: (props) => {
+          const subject = props.row.original;
+          const setionClassOfSemester = (subject.section_class || []).filter(item =>
+            item.semester_id === semesterSelect?.id
+          );
+          return (
+            <Text>{setionClassOfSemester.length}</Text>
+          )
+        }
+      },
+      {
+        accessorKey: "count_section_class_add_teacher",
+        header: "Số lớp đã phân công",
+        size: 220,
+        Cell: (props) => {
+          const subject = props.row.original;
+          const setionClassOfSemester = (subject.section_class || []).filter(item =>
+            item.semester_id === semesterSelect?.id
+          );
+          const setionClassOfSemesterAddTeacher = setionClassOfSemester.filter(item => item.teacher_id);
+          return (
+            <Text>{setionClassOfSemesterAddTeacher.length}/{setionClassOfSemester.length}</Text>
+          )
+        }
       },
       {
         accessorKey: "department_id",
@@ -124,7 +171,7 @@ const ManagerSubject: React.FC = () => {
                   </Group>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item 
+                  <Menu.Item
                     leftSection={<IconEye size={20} />}
                     onClick={() => onDetail(item.code)}
                   >
@@ -143,7 +190,7 @@ const ManagerSubject: React.FC = () => {
         }
       }
     ]
-  }, []);
+  }, [semesterSelect]);
 
   const table = useMantineReactTable({
     columns,
@@ -209,6 +256,19 @@ const ManagerSubject: React.FC = () => {
             onClick={onReload}
             leftSection={<IconReload size={18} />}
           >Tải lại</Button>
+          <Select
+            data={
+              semesters.map(item => ({
+                label: item.name,
+                value: `${item.id}`,
+              }))
+            }
+            value={semesterSelect ? `${semesterSelect.id}` : undefined}
+            onChange={e => {
+              const itemSelect = semesters.find(item => `${item.id}` === e);
+              setSemesterSelect(itemSelect || null);
+            }}
+          />
         </Group>
       )
     }
@@ -237,8 +297,9 @@ const ManagerSubject: React.FC = () => {
   }
 
   const onReload = () => {
-    setRowSelection({});
     refetch();
+    refetchSemester();
+    setRowSelection({});
   };
 
 
@@ -251,7 +312,14 @@ const ManagerSubject: React.FC = () => {
 
   useEffect(() => {
     refetch();
+    refetchSemester();
   }, []);
+
+  useEffect(() => {
+    if (semesters.length > 0) {
+      setSemesterSelect(semesters[0]);
+    }
+  }, [semesters]);
 
 
 
@@ -276,7 +344,7 @@ const ManagerSubject: React.FC = () => {
           table={table}
         />
       </Stack>
-      <ModalForm/>
+      <ModalForm />
     </ManagerSubjectContext.Provider>
   )
 }

@@ -1,5 +1,6 @@
 import type { BaseModel } from "./base";
 import type { DepartmentModel } from "./department";
+import type { SectionClassModel } from "./section_classes";
 
 export type SubjectModel = BaseModel & {
   name: string
@@ -11,4 +12,5 @@ export type SubjectModel = BaseModel & {
   department_id: number
 
   department?: DepartmentModel
+  section_class?: SectionClassModel[]
 }
