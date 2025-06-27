@@ -20,3 +20,4 @@ chạy backend:
 # giao tiếp:
     - business giao tiếp sync-typesense qua rabbitmq
 # stress test: k6 run test/stress_test.js
+# oke
